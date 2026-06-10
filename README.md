@@ -30,4 +30,4 @@ org-navne fra backenden, hvis funnel'en går i produktion.
 python3 -m http.server 8742   # åbn http://localhost:8742/
 ```
 
-Spørgsmål: Dan Holmstad (danholmstad@gmail.com / Holmstad@orbisx.ai).
+Spørgsmål: Dan Holmstad (holmstad@orbisx.ai).

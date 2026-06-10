@@ -25,10 +25,15 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 32px;
+  padding: 16px 32px;
+  background: var(--card);
+  border-bottom: 1px solid #e7eaf0;
 }
 
 .wordmark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
   font-weight: 800;
   font-size: 20px;
   letter-spacing: -0.02em;
@@ -36,6 +41,11 @@ body {
   text-decoration: none;
 }
 .wordmark span { color: var(--blue); }
+.wordmark .ring {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: 3px solid var(--sky); border-top-color: transparent;
+  transform: rotate(-45deg);
+}
 
 main {
   flex: 1;
@@ -127,8 +137,8 @@ h1 {
   color: #fff;
   font-weight: 600;
   font-size: 17px;
-  padding: 16px 32px;
-  border-radius: 999px;
+  padding: 15px 28px;
+  border-radius: 12px;
   text-decoration: none;
   box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
   transition: transform 0.12s, box-shadow 0.12s;

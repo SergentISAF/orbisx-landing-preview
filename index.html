@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OrbisX — Hvad skriver medierne om jer?</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="./">Orbis<span>X</span></a>
+  </header>
+
+  <main>
+    <h1>Hvad skriver medierne om jer?</h1>
+    <p class="lead">Søg jeres organisation frem og se jeres mediebillede med det samme. Uden login, og uden at booke noget først.</p>
+
+    <div class="search">
+      <input id="q" type="text" placeholder="Skriv jeres organisations navn" autocomplete="off" autofocus
+             aria-label="Søg efter organisation" aria-expanded="false" role="combobox" aria-controls="suggestions">
+      <div class="suggestions" id="suggestions" role="listbox"></div>
+    </div>
+    <p class="hint">Vi følger flere end 10.000 danske organisationer i medierne, døgnet rundt.</p>
+  </main>
+
+  <footer>Aalborg Håndbold, Kalundborg Forsyning og Panorama bruger OrbisX.</footer>
+
+  <script src="app.js"></script>
+  <script>
+    const input = document.getElementById('q');
+    const box = document.getElementById('suggestions');
+    let slugs = [];
+    let active = -1;
+
+    fetch('demo-index.json').then(r => r.json()).then(d => { slugs = d; });
+
+    function render(matches) {
+      active = -1;
+      if (!matches) { box.innerHTML = ''; input.setAttribute('aria-expanded', 'false'); return; }
+      if (matches.length === 0) {
+        box.innerHTML = '<div class="none">Ingen match endnu. Prøv en kortere del af navnet.</div>';
+      } else {
+        box.innerHTML = matches.map(s =>
+          `<a href="landing.html?org=${encodeURIComponent(s)}" role="option">${displayName(s)}</a>`
+        ).join('');
+      }
+      input.setAttribute('aria-expanded', 'true');
+    }
+
+    input.addEventListener('input', () => {
+      const q = normalize(input.value);
+      if (q.length < 2) { render(null); return; }
+      const starts = [], contains = [];
+      for (const s of slugs) {
+        if (s.startsWith(q)) starts.push(s);
+        else if (s.includes(q)) contains.push(s);
+        if (starts.length >= 8) break;
+      }
+      render(starts.concat(contains).slice(0, 8));
+    });
+
+    input.addEventListener('keydown', e => {
+      const items = box.querySelectorAll('a');
+      if (!items.length) return;
+      if (e.key === 'ArrowDown') { e.preventDefault(); active = (active + 1) % items.length; }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); active = (active - 1 + items.length) % items.length; }
+      else if (e.key === 'Enter') { e.preventDefault(); (items[active] || items[0]).click(); return; }
+      else return;
+      items.forEach((el, i) => el.classList.toggle('active', i === active));
+    });
+
+    document.addEventListener('click', e => {
+      if (!e.target.closest('.search')) render(null);
+    });
+  </script>
+</body>
+</html>

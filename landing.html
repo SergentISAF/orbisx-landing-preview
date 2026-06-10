@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OrbisX — Jeres mediebillede</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="./">Orbis<span>X</span></a>
+  </header>
+
+  <main id="content">
+    <!-- udfyldes af script -->
+  </main>
+
+  <footer>Aalborg Håndbold, Kalundborg Forsyning og Panorama bruger OrbisX.</footer>
+
+  <script src="app.js"></script>
+  <script>
+    const QUOTES = {
+      sport: {
+        text: '"Det er virkelig rart at have alle nyheder samlet på ét sted. Vi har en skærm på kontoret, hvor de seneste nyheder for os ruller over hele tiden, så vi alle ved, hvad der rører sig."',
+        who: 'Martin Stigaard Skammelsen', role: 'Marketing- og oplevelseschef, Aalborg Håndbold'
+      },
+      forsyning: {
+        text: '"Vi har valgt orbis, fordi deres produkt tilbyder opdateringer i \'real-time\' og derudover er deres nyhedsagenter ligetil og enormt funktionelle. I de år jeg har arbejdet med medier, har jeg ikke set et produkt tilbyde de features til en så konkurrencedygtig pris."',
+        who: 'William Ejsing', role: 'Presseansvarlig, Kalundborg Forsyning'
+      },
+      privat: {
+        text: '"Vi har en travl hverdag, så vi har ikke tid til at holde øje med vores brand i medierne. Vi tjekker orbis 3-4 gange i måneden, og det er trygt at vide, at agenterne har samlet det hele sammen til os – og vi bliver faktisk nævnt oftere og på andre medier, end vi lige havde regnet med. Det har frigivet dyrebar tid, at vi ikke skal surfe rundt for at holde os opdateret."',
+        who: 'Camilla Panorama Højlund', role: 'Medejer, Panorama'
+      }
+    };
+
+    const SPORT = ['haandbold', 'fodbold', 'boldklub', 'idraet', 'sport', 'klub', 'gymnastik', 'ishockey', 'badminton', 'elite', 'atletik', 'svoemme'];
+    const FORSYNING = ['forsyning', 'vand', 'energi', 'varme', 'affald', 'renovation', 'spildevand', 'fjernvarme', 'elnet'];
+
+    function segmentFor(slug) {
+      if (SPORT.some(w => slug.includes(w))) return 'sport';
+      if (FORSYNING.some(w => slug.includes(w))) return 'forsyning';
+      return 'privat';
+    }
+
+    const slug = new URLSearchParams(location.search).get('org') || '';
+    const main = document.getElementById('content');
+
+    fetch('demo-index.json').then(r => r.json()).then(slugs => {
+      if (!slug || !slugs.includes(slug)) {
+        main.innerHTML = `
+          <h1>Vi kunne ikke finde den side.</h1>
+          <p class="lead">Gå tilbage og søg jeres organisation frem, så viser vi jer hvad medierne skriver.</p>
+          <a class="cta" href="./">Søg efter jeres organisation</a>`;
+        return;
+      }
+
+      const name = displayName(slug);
+      const q = QUOTES[segmentFor(slug)];
+      const demoUrl = `https://orbisx.ai/dk/da/demo/${slug}`;
+
+      document.title = `OrbisX — ${name} i medierne`;
+      main.innerHTML = `
+        <p class="eyebrow">Live mediebillede</p>
+        <h1>${name} er i mediebilledet.</h1>
+        <p class="lead">OrbisX følger danske medier døgnet rundt og samler løbende omtaler af ${name} på en åben side. Den er klar nu, og I kan se den uden at oprette noget.</p>
+        <a class="cta" href="${demoUrl}">Se jeres mediebillede live</a>
+        <p class="cta-sub">Åbner jeres side på orbisx.ai. Opdateres løbende.</p>
+        <figure class="quote-card">
+          <blockquote>${q.text}</blockquote>
+          <figcaption><strong>${q.who}</strong> · ${q.role}</figcaption>
+        </figure>`;
+    });
+  </script>
+</body>
+</html>
